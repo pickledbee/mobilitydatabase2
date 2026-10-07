@@ -9,19 +9,26 @@
   const linkBtn = 'style="background:none;border:0;font:inherit;cursor:pointer;color:var(--blue);text-decoration:underline;min-height:44px;padding:0"';
 
   // ================================================================== LOGIN
+  const PW_HINT = 'At least 10 characters. A short sentence you will remember works well, for example: blue heron walks slowly';
+
   M.pages.login = function () {
     const app = $('#app');
     const p = M.params();
     const next = M.safeNext(p.next);
+    const nextQ = next ? '?next=' + encodeURIComponent(next) : '';
+    const goNext = () => window.location.replace(next || 'dashboard.html');
 
+    // ---- the person pressed the link in an email
     if (p.t) {
-      app.innerHTML = `<div class="card" role="status"><h2>Signing you in...</h2><p>One moment.</p></div>`;
-      try { window.history.replaceState(null, '', 'login.html' + (next ? '?next=' + encodeURIComponent(next) : '')); } catch (e) { /* ignore */ }
-      M.api('verifyLogin', { token: p.t }, { noToken: true }).then(r => {
-        M.setSession(r.session, r.user);
-        window.location.replace(next || 'dashboard.html');
+      app.innerHTML = `<div class="card" role="status"><h2>One moment...</h2><p>Checking your link.</p></div>`;
+      try { window.history.replaceState(null, '', 'login.html' + nextQ); } catch (e) { /* ignore */ }
+      const signup = p.m === 'signup';
+      M.api(signup ? 'verifySignup' : 'verifyLogin', { token: p.t }, { noToken: true }).then(r => {
+        M.setSession(r.session, r.user, true);
+        if (r.reset || (!signup && r.needsPassword)) { choosePassword(r.reset ? 'reset' : 'first'); }
+        else { goNext(); }
       }, err => {
-        app.innerHTML = `${M.errorBox(err.message)}<p><a class="btn" href="login.html${next ? '?next=' + encodeURIComponent(next) : ''}">Get a new sign-in link</a></p>`;
+        app.innerHTML = `${M.errorBox(err.message)}<p><a class="btn" href="login.html${nextQ}">Back to sign in</a></p>`;
       });
       return;
     }
@@ -34,27 +41,132 @@
       return;
     }
 
-    app.innerHTML = `<div class="card"><h2>Sign in or create your account</h2>
-      <p>Enter your email address. We will email you a link that signs you in. There is no password to remember, and one email works for buying and selling.</p>
-      <form id="lf" novalidate>
-        <div class="field"><label for="l-email">Email address</label><input id="l-email" type="email" autocomplete="email" required></div>
-        <div class="field"><label for="l-role">I am mostly here to</label><select id="l-role">${M.roleOptionsHtml('buyer')}</select></div>
-        <div class="check"><input type="checkbox" id="l-consent"><label for="l-consent">Also email me the weekly update with new listings and price drops (optional).</label></div>
-        <div id="l-hc"></div>
-        <button class="btn btn-block" type="submit">Email me a sign-in link</button>
-      </form></div>
-      <p class="small muted" style="margin-top:1rem">By continuing you agree to the <a href="terms.html">Terms of Use</a> and <a href="privacy.html">Privacy Policy</a>.</p>`;
-    const f = $('#lf'), hc = M.humanCheck($('#l-hc'));
-    f.addEventListener('submit', e => {
-      e.preventDefault(); M.clearError(f);
-      const email = $('#l-email').value.trim();
-      if (!M.validEmail(email)) { M.showError(f, 'Please enter a valid email address.'); return; }
-      const done = M.busy(f.querySelector('button[type=submit]'), 'Sending...');
-      const v = hc.values();
-      M.api('requestLogin', { email: email, role: $('#l-role').value, consent: $('#l-consent').checked, next: next, hp: v.hp, ch: v.ch }, { noToken: true }).then(() => {
-        app.innerHTML = `<div class="notice notice-ok" role="status"><h2 style="margin-top:0">Check your email</h2><p>We sent a sign-in link to <strong>${esc(email)}</strong>. It works once and expires in about 15 minutes.</p><p>Nothing arrived? Look in your spam or junk folder, then <a href="login.html${next ? '?next=' + encodeURIComponent(next) : ''}">try again</a>.</p></div>`;
-      }, err => { done(); hc.reset(); M.showError(f, err.message); });
-    });
+    // ---- choose a password right after an email link (first time, or reset)
+    function choosePassword(kind) {
+      app.innerHTML = `<div class="card"><h2>${kind === 'reset' ? 'Choose a new password' : 'Create a password'}</h2>
+        <p>${kind === 'reset' ? 'You are signed in. Choose a new password for next time.' : 'You are signed in. Create a password so you can sign in quickly next time. You can also skip this and keep using email links.'}</p>
+        <form id="cp" novalidate>
+          ${M.passwordField('cp-new', 'New password', { autocomplete: 'new-password', hint: PW_HINT })}
+          ${M.passwordField('cp-new2', 'Type it again', { autocomplete: 'new-password' })}
+          <button class="btn btn-block" type="submit">Save password</button>
+        </form>
+        ${kind === 'reset' ? '' : `<p style="margin-top:1rem"><button type="button" id="cp-skip" ${linkBtn}>Skip for now</button></p>`}</div>`;
+      M.wirePasswordToggles(app);
+      const f = $('#cp');
+      const skip = $('#cp-skip'); if (skip) { skip.addEventListener('click', goNext); }
+      f.addEventListener('submit', e => {
+        e.preventDefault(); M.clearError(f);
+        const a = $('#cp-new').value, b = $('#cp-new2').value;
+        if (a.length < 10) { M.showError(f, 'Your password needs at least 10 characters.'); return; }
+        if (a !== b) { M.showError(f, 'The two passwords do not match. Please type them again.'); return; }
+        const done = M.busy(f.querySelector('button[type=submit]'), 'Saving...');
+        M.api('setPassword', { newPassword: a }).then(r => { M.setUser(r.user); M.toast('Password saved.', 'ok'); goNext(); }, err => { done(); M.showError(f, err.message); });
+      });
+    }
+
+    // ---- "check your email" screen
+    function sentScreen(title, email, lines) {
+      app.innerHTML = `<div class="notice notice-ok" role="status"><h2 style="margin-top:0">${esc(title)}</h2><p>We sent an email to <strong>${esc(email)}</strong>.</p>${lines}<p>Nothing arrived? Look in your spam or junk folder, then <a href="login.html${nextQ}">try again</a>.</p></div>`;
+    }
+
+    // ---- forgot password / email me a link
+    function emailLinkForm(reset) {
+      app.innerHTML = `<div class="card"><h2>${reset ? 'Forgot your password?' : 'Email me a sign-in link'}</h2>
+        <p>${reset ? 'Enter your email address. We will send you a link to choose a new password.' : 'Enter your email address. We will send a link that signs you in with no password.'}</p>
+        <form id="ef" novalidate>
+          <div class="field"><label for="e-email">Email address</label><input id="e-email" type="email" autocomplete="email" required></div>
+          <div id="e-hc"></div>
+          <button class="btn btn-block" type="submit">${reset ? 'Email me a reset link' : 'Email me a sign-in link'}</button>
+        </form>
+        <p style="margin-top:1rem"><a href="login.html${nextQ}">Back to sign in</a></p></div>`;
+      const f = $('#ef'), hc = M.humanCheck($('#e-hc'));
+      f.addEventListener('submit', e => {
+        e.preventDefault(); M.clearError(f);
+        const email = $('#e-email').value.trim();
+        if (!M.validEmail(email)) { M.showError(f, 'Please enter a valid email address.'); return; }
+        const done = M.busy(f.querySelector('button[type=submit]'), 'Sending...');
+        const v = hc.values();
+        M.api('requestLogin', { email: email, reset: reset, next: next, hp: v.hp, ch: v.ch }, { noToken: true }).then(() => {
+          sentScreen('Check your email', email, `<p>The link works once and expires in about 15 minutes.</p>`);
+        }, err => { done(); hc.reset(); M.showError(f, err.message); });
+      });
+    }
+
+    // ---- main screen: sign in / create account
+    function main(mode) {
+      const create = mode === 'create';
+      app.innerHTML = `<div class="tabs" role="tablist" aria-label="Sign in or create an account">
+          <button type="button" role="tab" id="t-in" aria-selected="${!create}" class="tab${create ? '' : ' active'}">Sign in</button>
+          <button type="button" role="tab" id="t-new" aria-selected="${create}" class="tab${create ? ' active' : ''}">Create account</button>
+        </div>
+        <div class="card" role="tabpanel">${create ? createHtml() : signinHtml()}</div>
+        <p class="small muted" style="margin-top:1rem">By continuing you agree to the <a href="terms.html">Terms of Use</a> and <a href="privacy.html">Privacy Policy</a>.</p>`;
+      $('#t-in').addEventListener('click', () => main('signin'));
+      $('#t-new').addEventListener('click', () => main('create'));
+      M.wirePasswordToggles(app);
+      if (create) { wireCreate(); } else { wireSignin(); }
+    }
+
+    function signinHtml() {
+      return `<h2>Sign in</h2>
+        <form id="sf" novalidate>
+          <div class="field"><label for="s-email">Email address</label><input id="s-email" type="email" autocomplete="username" required></div>
+          ${M.passwordField('s-pw', 'Password', { autocomplete: 'current-password' })}
+          <div class="check"><input type="checkbox" id="s-keep" checked><label for="s-keep">Keep me signed in on this device for 30 days. Leave this unchecked on a shared or public computer.</label></div>
+          <div id="s-hc"></div>
+          <button class="btn btn-block" type="submit">Sign in</button>
+        </form>
+        <p style="margin:1rem 0 .3rem"><button type="button" id="s-forgot" ${linkBtn}>Forgot your password?</button></p>
+        <p style="margin:0"><button type="button" id="s-link" ${linkBtn}>Email me a sign-in link instead</button></p>`;
+    }
+    function wireSignin() {
+      const f = $('#sf'), hc = M.humanCheck($('#s-hc'));
+      $('#s-forgot').addEventListener('click', () => emailLinkForm(true));
+      $('#s-link').addEventListener('click', () => emailLinkForm(false));
+      f.addEventListener('submit', e => {
+        e.preventDefault(); M.clearError(f);
+        const email = $('#s-email').value.trim(), pw = $('#s-pw').value;
+        if (!M.validEmail(email)) { M.showError(f, 'Please enter a valid email address.'); return; }
+        if (!pw) { M.showError(f, 'Please enter your password.'); return; }
+        const done = M.busy(f.querySelector('button[type=submit]'), 'Signing in...');
+        const v = hc.values(), keep = $('#s-keep').checked;
+        M.api('loginPassword', { email: email, password: pw, remember: keep, hp: v.hp, ch: v.ch }, { noToken: true }).then(r => {
+          M.setSession(r.session, r.user, keep);
+          goNext();
+        }, err => { done(); hc.reset(); $('#s-pw').value = ''; M.showError(f, err.message); });
+      });
+    }
+
+    function createHtml() {
+      return `<h2>Create your account</h2>
+        <p>One account works for buying and selling. We will email you a link to confirm your address.</p>
+        <form id="cf" novalidate>
+          <div class="field"><label for="c-email">Email address</label><input id="c-email" type="email" autocomplete="username" required><p class="hint">Never shown to other members.</p></div>
+          ${M.passwordField('c-pw', 'Create a password', { autocomplete: 'new-password', hint: PW_HINT })}
+          ${M.passwordField('c-pw2', 'Type the password again', { autocomplete: 'new-password' })}
+          <div class="field"><label for="c-role">I am mostly here to</label><select id="c-role">${M.roleOptionsHtml('buyer')}</select></div>
+          <div class="check"><input type="checkbox" id="c-consent"><label for="c-consent">Also email me the weekly update with new listings and price drops (optional).</label></div>
+          <div id="c-hc"></div>
+          <button class="btn btn-block" type="submit">Create my account</button>
+        </form>`;
+    }
+    function wireCreate() {
+      const f = $('#cf'), hc = M.humanCheck($('#c-hc'));
+      f.addEventListener('submit', e => {
+        e.preventDefault(); M.clearError(f);
+        const email = $('#c-email').value.trim(), a = $('#c-pw').value, b = $('#c-pw2').value;
+        if (!M.validEmail(email)) { M.showError(f, 'Please enter a valid email address.'); return; }
+        if (a.length < 10) { M.showError(f, 'Your password needs at least 10 characters.'); return; }
+        if (a !== b) { M.showError(f, 'The two passwords do not match. Please type them again.'); return; }
+        const done = M.busy(f.querySelector('button[type=submit]'), 'Creating...');
+        const v = hc.values();
+        M.api('signup', { email: email, password: a, role: $('#c-role').value, consent: $('#c-consent').checked, next: next, hp: v.hp, ch: v.ch }, { noToken: true }).then(() => {
+          sentScreen('Almost done. Check your email', email, `<p>Press the button in that email to confirm your address and finish creating your account. The link works once and expires in about an hour.</p><p>If you already have an account, we sent a note about that instead.</p>`);
+        }, err => { done(); hc.reset(); M.showError(f, err.message); });
+      });
+    }
+
+    main(p.mode === 'create' || window.location.hash === '#create' ? 'create' : 'signin');
   };
 
   // ================================================================== CREATE LISTING
@@ -476,6 +588,41 @@
           <div class="item-actions"><a class="btn btn-secondary btn-sm" href="delivery.html?id=${encodeURIComponent(D.id)}">Open</a></div></div></article>`).join('');
       }, err => { body.innerHTML = M.errorBox(err.message); });
     }
+    function passwordCard(u) {
+      const box = $('#pw-body');
+      function mailForm(msg) {
+        box.innerHTML = `<p>${msg}</p><form id="pl" novalidate><div id="pl-hc"></div><button class="btn btn-secondary" type="submit">Email me a link to ${u.hasPassword ? 'reset my password' : 'set a password'}</button></form>`;
+        const f = $('#pl'), hc = M.humanCheck($('#pl-hc'));
+        f.addEventListener('submit', e => {
+          e.preventDefault(); M.clearError(f);
+          const done = M.busy(f.querySelector('button[type=submit]'), 'Sending...'), v = hc.values();
+          M.api('requestLogin', { email: u.email, reset: true, next: 'dashboard.html#profile', hp: v.hp, ch: v.ch }, { noToken: true }).then(() => {
+            box.innerHTML = `<div class="notice notice-ok" role="status"><p style="margin:0">We sent a link to <strong>${esc(u.email)}</strong>. Press it to choose a password. It works once and expires in about 15 minutes.</p></div>`;
+          }, err => { done(); hc.reset(); M.showError(f, err.message); });
+        });
+      }
+      if (!u.hasPassword) { mailForm('You have no password yet. You sign in with email links. To add a password, we first confirm your email address.'); return; }
+      box.innerHTML = `<p class="muted">You have a password. Changing it signs you out on your other devices.</p>
+        <form id="cpw" novalidate>
+          ${M.passwordField('pw-cur', 'Current password', { autocomplete: 'current-password' })}
+          ${M.passwordField('pw-new', 'New password', { autocomplete: 'new-password', hint: PW_HINT })}
+          ${M.passwordField('pw-new2', 'Type the new password again', { autocomplete: 'new-password' })}
+          <button class="btn" type="submit">Change password</button></form>
+        <p style="margin-top:1rem"><button type="button" id="pw-forgot" ${linkBtn}>I forgot my current password</button></p>`;
+      M.wirePasswordToggles(box);
+      $('#pw-forgot').addEventListener('click', () => mailForm('We will email you a link so you can choose a new password.'));
+      const f = $('#cpw');
+      f.addEventListener('submit', e => {
+        e.preventDefault(); M.clearError(f);
+        const a = $('#pw-new').value, b = $('#pw-new2').value;
+        if (a.length < 10) { M.showError(f, 'Your new password needs at least 10 characters.'); return; }
+        if (a !== b) { M.showError(f, 'The two new passwords do not match.'); return; }
+        const done = M.busy(f.querySelector('button[type=submit]'), 'Saving...');
+        M.api('setPassword', { currentPassword: $('#pw-cur').value, newPassword: a }).then(r => {
+          me = r.user; M.setUser(me); done(); f.reset(); M.toast('Password changed.', 'ok');
+        }, err => { done(); M.showError(f, err.message); });
+      });
+    }
     function tabProfile() {
       const u = me || M.user() || {};
       body.innerHTML = `<form id="pf" class="card" novalidate><h2>Your profile</h2>
@@ -485,6 +632,7 @@
         <div class="check"><input type="checkbox" id="p-care" ${u.caregiverMode ? 'checked' : ''}><label for="p-care">Caregiver mode: I am shopping or selling for someone else.</label></div>
         <div class="field" id="p-onb" ${u.caregiverMode ? '' : 'hidden'}><label for="p-label">Who are you helping? (shown on your messages)</label><input id="p-label" type="text" maxlength="40" value="${esc(u.onBehalfLabel || '')}" placeholder="Example: my mother"><p class="hint">Messages will say "Caregiver writing for my mother". Use a relationship, not a name.</p></div>
         <button class="btn" type="submit">Save profile</button></form>
+        <div class="card" style="margin-top:1.2rem" id="pw-card"><h2>Password</h2><div id="pw-body"></div></div>
         <div class="card" style="margin-top:1.2rem"><h2>Email settings</h2><p>Every email has an unsubscribe link. Alerts you created are managed on the <a href="#alerts" data-goto-tab="alerts">Alerts tab</a>.</p></div>
         <p style="margin-top:1.2rem"><button class="btn btn-secondary" type="button" data-signout>Sign out</button></p>`;
       const pf = $('#pf');
@@ -496,6 +644,7 @@
           me = r.user; M.setUser(me); done(); M.toast('Profile saved.', 'ok');
         }, err => { done(); M.showError(pf, err.message); });
       });
+      passwordCard(u);
       $('[data-signout]').addEventListener('click', () => { M.api('logout', {}, { authRedirect: false }).catch(() => {}).then(() => { M.clearSession(); window.location.href = 'index.html'; }); });
       const gt = $('[data-goto-tab]'); if (gt) { gt.addEventListener('click', e => { e.preventDefault(); render('alerts'); }); }
     }
