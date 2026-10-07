@@ -7,6 +7,6 @@
    4. Save, and upload this file to your site again.
 */
 window.MDB_CONFIG = {
-  API_URL: 'PASTE_YOUR_WEB_APP_URL_HERE',
+  API_URL: 'https://script.google.com/macros/s/AKfycbweiMhQyHRw9SJ8K1CybRc8A2GzrAphjC-J3cbjo0_l6pFJMt4aDdSUxO9G82NoZijstw/exec',
   SITE_NAME: 'Mobility Database'
 };
