@@ -117,11 +117,43 @@
   M.catIcon = function (cat) { return CAT_ICON[cat] || 'parts'; };
 
   // ------------------------------------------------------------------ session
-  M.token = function () { return sget('mdb_session') || ''; };
-  M.user = function () { try { return JSON.parse(sget('mdb_user') || 'null'); } catch (e) { return null; } };
-  M.setSession = function (token, user) { sset('mdb_session', token); sset('mdb_user', JSON.stringify(user || null)); };
-  M.setUser = function (user) { sset('mdb_user', JSON.stringify(user || null)); };
-  M.clearSession = function () { sdel('mdb_session'); sdel('mdb_user'); };
+  // "Keep me signed in" puts the session in localStorage (survives closing the browser).
+  // Otherwise it goes in sessionStorage and disappears when the tab or browser closes.
+  function ssGet(k) { try { return window.sessionStorage.getItem(k); } catch (e) { return mem['s_' + k] === undefined ? null : mem['s_' + k]; } }
+  function ssSet(k, v) { try { window.sessionStorage.setItem(k, v); } catch (e) { mem['s_' + k] = v; } }
+  function ssDel(k) { try { window.sessionStorage.removeItem(k); } catch (e) { delete mem['s_' + k]; } }
+  M.token = function () { return sget('mdb_session') || ssGet('mdb_session') || ''; };
+  M.user = function () { try { return JSON.parse(sget('mdb_user') || ssGet('mdb_user') || 'null'); } catch (e) { return null; } };
+  M.setSession = function (token, user, remember) {
+    M.clearSession();
+    if (remember === false) { ssSet('mdb_session', token); ssSet('mdb_user', JSON.stringify(user || null)); }
+    else { sset('mdb_session', token); sset('mdb_user', JSON.stringify(user || null)); }
+  };
+  M.setUser = function (user) {
+    var v = JSON.stringify(user || null);
+    if (ssGet('mdb_session')) { ssSet('mdb_user', v); } else { sset('mdb_user', v); }
+  };
+  M.clearSession = function () { sdel('mdb_session'); sdel('mdb_user'); ssDel('mdb_session'); ssDel('mdb_user'); };
+  // Password box with a Show/Hide button. Returns HTML; call M.wirePasswordToggles(container) afterwards.
+  M.passwordField = function (id, label, opts) {
+    opts = opts || {};
+    return '<div class="field"><label for="' + id + '">' + label + '</label>' +
+      '<div class="pw-wrap"><input id="' + id + '" type="password" autocomplete="' + (opts.autocomplete || 'current-password') + '" maxlength="100" required' + (opts.minlength ? ' minlength="' + opts.minlength + '"' : '') + ' autocapitalize="none" spellcheck="false">' +
+      '<button type="button" class="pw-toggle" data-pw-toggle="' + id + '" aria-label="Show password" aria-pressed="false">Show</button></div>' +
+      (opts.hint ? '<p class="hint">' + opts.hint + '</p>' : '') + '</div>';
+  };
+  M.wirePasswordToggles = function (root) {
+    M.$$('[data-pw-toggle]', root).forEach(function (b) {
+      b.addEventListener('click', function () {
+        var inp = document.getElementById(b.getAttribute('data-pw-toggle'));
+        var show = inp.type === 'password';
+        inp.type = show ? 'text' : 'password';
+        b.textContent = show ? 'Hide' : 'Show';
+        b.setAttribute('aria-pressed', show ? 'true' : 'false');
+        b.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+      });
+    });
+  };
   M.loggedIn = function () { return !!M.token(); };
   M.here = function () {
     var f = window.location.pathname.split('/').pop() || 'index.html';
