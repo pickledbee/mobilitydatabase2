@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /admin.html
+Disallow: /carrier.html
+Disallow: /dashboard.html
+Disallow: /messages.html
+Disallow: /delivery.html
+Disallow: /login.html
+Disallow: /unsubscribe.html
+Disallow: /create-listing.html

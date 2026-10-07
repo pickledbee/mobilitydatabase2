@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mobility Database - Used Wheelchairs, Scooters, Lifts and Ramps</title>
+<meta name="description" content="A marketplace for used mobility equipment with honest condition grades, private messaging, a Fit Finder, and delivery across Wisconsin.">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://drive.google.com https://*.googleusercontent.com; connect-src https://script.google.com https://script.googleusercontent.com; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta name="theme-color" content="#0e2a38">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='10' fill='%230e2a38'/%3E%3Ccircle cx='24' cy='24' r='13' fill='none' stroke='%23bfe3f2' stroke-width='4'/%3E%3Ccircle cx='24' cy='24' r='3.5' fill='%23bfe3f2'/%3E%3Cpath d='M24 11v10M24 27v10M11 24h10M27 24h10' stroke='%23bfe3f2' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&amp;display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="home" data-bar="1">
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="site-header"><div class="wrap">
+<a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect width="48" height="48" rx="10" fill="#0b5c86"/><circle cx="24" cy="24" r="13" fill="none" stroke="#fff" stroke-width="4"/><circle cx="24" cy="24" r="3.5" fill="#fff"/><path d="M24 11v10M24 27v10M11 24h10M27 24h10" stroke="#fff" stroke-width="3"/></svg><span>Mobility Database</span></a>
+<button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+<nav class="site-nav" id="site-nav" aria-label="Main">
+<a href="browse.html">Browse</a><a href="free-corner.html">Free Corner</a><a href="wanted.html">Wanted</a><a href="fit-finder.html">Fit Finder</a><a href="price-guide.html">Price Guide</a><a href="guides.html">Guides</a>
+<a href="messages.html" data-nav-messages hidden>Messages</a><a href="admin.html" data-nav-admin hidden>Admin</a><a href="login.html" data-nav-account>Sign in</a>
+<a class="btn" href="create-listing.html">Sell equipment</a>
+</nav></div></header>
+<main id="main">
+
+<section class="hero"><div class="wrap hero-grid">
+<div>
+<h1>Used mobility equipment, honestly graded.</h1>
+<p>Find wheelchairs, scooters, lifts, ramps, and more from real people near you. Every listing has a plain condition grade, a seller checklist, and private messaging. Wisconsin buyers can also get it delivered.</p>
+<p><a class="btn btn-light" href="browse.html">Browse listings</a> <a class="btn btn-secondary" href="create-listing.html" style="background:transparent;color:#fff;border-color:#bfe3f2">Sell your equipment</a></p>
+</div>
+<div class="search-card"><h2>Search near you</h2>
+<form id="home-search" novalidate>
+<div class="field"><label for="hs-q">What are you looking for?</label><input id="hs-q" name="q" type="search" placeholder="Example: folding scooter"></div>
+<div class="field"><label for="hs-category">Type of equipment</label><select id="hs-category" name="category"><option value="">All equipment</option></select></div>
+<div class="form-grid two"><div class="field"><label for="hs-zip">Your ZIP code</label><input id="hs-zip" name="zip" inputmode="numeric" maxlength="5" autocomplete="postal-code"></div>
+<div class="field"><label for="hs-radius">Within</label><select id="hs-radius" name="radius"><option value="25">25 miles</option><option value="50" selected>50 miles</option><option value="100">100 miles</option><option value="250">250 miles</option></select></div></div>
+<button class="btn btn-block" type="submit">Search</button>
+</form></div>
+</div></section>
+
+<section class="section"><div class="wrap">
+<h2>Browse by type</h2>
+<div class="cat-grid" id="home-cats"><a class="cat-tile" href="browse.html">All equipment</a></div>
+</div></section>
+
+<section class="section band"><div class="wrap">
+<div class="row row-between"><h2 style="margin:0">Newest listings</h2><a href="browse.html">See all listings</a></div>
+<div id="home-new" style="margin-top:1rem"><noscript><p><a href="browse.html">Open the listings page</a></p></noscript></div>
+</div></section>
+
+<section class="section"><div class="wrap">
+<h2>What makes this different</h2>
+<p>Facebook groups and classified sites make you guess. Here, every listing answers the questions buyers always ask, and the site helps you check the answers.</p>
+<ul class="trust-list">
+<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg><div><strong>Four plain condition grades.</strong> A, B, C, or Parts Only, each with a written meaning. No more "works great" with no details.</div></li>
+<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12.5l5 5 11-11"/></svg><div><strong>A seller checklist on every listing.</strong> Powers on, brakes tested, battery tested, cleaned. Sellers must confirm all four.</div></li>
+<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><div><strong>Private messaging.</strong> Nobody sees your email address or phone number unless you both choose to share. Contact details cannot be typed into messages or listings.</div></li>
+<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg><div><strong>Equipment Passport.</strong> Look up any serial number to see if it has been listed here before, how often, and by how many sellers.</div></li>
+<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 17L17 3l4 4L7 21zM7 13l2 2M10 10l2 2M13 7l2 2"/></svg><div><strong>Fit Finder.</strong> Enter a weight, a doorway width, and your vehicle. See only equipment that can work, and what the seller did not say.</div></li>
+<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg><div><strong>Price Guide.</strong> A rough price range by type, age, and condition, plus real prices from this site. A starting point, not an appraisal.</div></li>
+<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 6h11v10H2zM13 9h4l3 3v4h-7zM6 19.5a1.5 1.5 0 1 0 0-.01M17 19.5a1.5 1.5 0 1 0 0-.01"/></svg><div><strong>Delivery across Wisconsin.</strong> An independent delivery partner picks it up and brings it to the buyer, with photos at pickup and delivery and a signature.</div></li>
+<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 12V5a1.5 1.5 0 0 1 3 0v6M11 11V3.5a1.5 1.5 0 0 1 3 0V11M14 11V5a1.5 1.5 0 0 1 3 0v8c0 5-2 8-6 8s-5-2-7-6l-1-2a1.5 1.5 0 0 1 2.5-1.5L8 14"/></svg><div><strong>Wanted Board.</strong> Post what you need. Sellers with a match are told, and they answer privately.</div></li>
+</ul>
+<div class="notice notice-info" style="margin-top:1rem"><p><strong>We never handle your money.</strong> The site does not take payments. Pay in person or arrange payment directly. Never pay with gift cards or wire transfers.</p></div>
+</div></section>
+
+<section class="section band"><div class="wrap">
+<h2>How it works</h2>
+<div class="grid cols-2">
+<div><h3>If you are buying</h3><ol class="steps" style="list-style:none;padding:0;counter-reset:step;display:grid;gap:12px;max-width:none">
+<li class="step"><h3>Search or use the Fit Finder</h3><p>Filter by type, price, grade, distance, or delivery.</p></li>
+<li class="step"><h3>Ask the seller</h3><p>Sign in with your email. No password. Your details stay private.</p></li>
+<li class="step"><h3>Pick it up or have it delivered</h3><p>Meet in a public place, or request Wisconsin delivery and see the price first.</p></li></ol></div>
+<div><h3>If you are selling</h3><ol class="steps" style="list-style:none;padding:0;counter-reset:step;display:grid;gap:12px;max-width:none">
+<li class="step"><h3>Take photos and fill in the form</h3><p>About ten minutes. We show a rough price range to help.</p></li>
+<li class="step"><h3>We check your first listing</h3><p>A person reviews it before it goes live. Later listings go live right away.</p></li>
+<li class="step"><h3>Answer messages and mark it sold</h3><p>Your Verified Seller badge grows with each completed sale.</p></li></ol></div>
+</div></div></section>
+
+<section class="section" id="home-wi" hidden><div class="wrap"><div class="callout"><div><h2>In Wisconsin? It can come to you.</h2><p>Mobility City, an independent delivery partner, can pick up an item from the seller and deliver it to your door. Enter your ZIP code on any listing marked Wisconsin delivery to see the price before you decide.</p></div><a class="btn" href="browse.html?delivery=1">See listings with delivery</a></div></div></section>
+
+<section class="section"><div class="wrap"><div class="grid cols-2">
+<div class="callout" style="grid-template-columns:1fr"><div><h2>Free guides</h2><p>A buying checklist, a guide to pricing and photographing your equipment, and a guide for caregivers facing a hospital discharge.</p></div><div><a class="btn" href="guides.html">Get the free guides</a></div></div>
+<div class="callout" style="grid-template-columns:1fr"><div><h2>Clearing out an estate?</h2><p>If you are helping a family downsize or settle an estate with several pieces of equipment, tell us what you have and we will help you list it.</p></div><div><a class="btn" href="estate.html">Estates and downsizing</a></div></div>
+</div></div></section>
+
+</main>
+<footer class="site-footer"><div class="wrap">
+<div class="footer-grid">
+<div><h2>Mobility Database</h2><p>Used mobility equipment, listed by people, with honest grades and fewer surprises.</p></div>
+<div><h2>Explore</h2><ul class="footer-links"><li><a href="browse.html">Browse equipment</a></li><li><a href="free-corner.html">Free Corner</a></li><li><a href="wanted.html">Wanted Board</a></li><li><a href="fit-finder.html">Fit Finder</a></li><li><a href="price-guide.html">Price Guide</a></li><li><a href="passport.html">Equipment Passport</a></li><li><a href="directory.html">Local businesses</a></li><li><a href="guides.html">Free guides</a></li><li><a href="estate.html">Estates and downsizing</a></li><li><a href="success-stories.html">Success stories</a></li></ul></div>
+<div><h2>Company</h2><ul class="footer-links"><li><a href="contact.html">Contact us</a></li><li><a href="terms.html">Terms of Use</a></li><li><a href="delivery-terms.html">Delivery Terms</a></li><li><a href="privacy.html">Privacy Policy</a></li><li><a href="prohibited.html">Listing rules</a></li><li><a href="create-listing.html">Sell equipment</a></li><li><a href="login.html">Sign in</a></li></ul></div>
+<div><h2>Weekly update</h2><p>New listings and price drops, once a week. Free.</p>
+<form id="footer-subscribe" novalidate><div class="field"><label for="fs-email">Email address</label><input id="fs-email" type="email" autocomplete="email" required></div>
+<div class="field"><label for="fs-role">I am</label><select id="fs-role" name="role"><option value="buyer">Looking to buy</option><option value="seller">Looking to sell</option><option value="caregiver">A caregiver or family member</option><option value="dealer">A business</option></select></div>
+<div class="check"><input type="checkbox" id="fs-consent" required><label for="fs-consent">Yes, email me the weekly update. I can unsubscribe at any time.</label></div>
+<div class="hc-slot"></div><button class="btn btn-light btn-block" type="submit">Sign me up</button></form></div>
+</div>
+<p class="disclaimer" data-disclaimer>Mobility Database is a listing service. We do not own, inspect, or sell the equipment, and we are not a medical provider. Buyers and sellers deal with each other directly. Nothing here is medical or legal advice.</p>
+<p class="small">&copy; 2026 Mobility Database. All rights reserved.</p>
+</div></footer>
+<script src="js/config.js" defer></script>
+<script src="js/app.js" defer></script>
+<script src="js/pages-browse.js" defer></script>
+</body></html>
