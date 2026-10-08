@@ -252,7 +252,7 @@
           </div>
           <fieldset><legend>How can the buyer get it?</legend>
             ${otherPickups.map((o, i) => `<div class="check"><input type="checkbox" name="pickup" id="pk${i}" value="${esc(o)}"><label for="pk${i}">${esc(o)}</label></div>`).join('')}
-            <div class="check"><input type="checkbox" id="pk-carrier" name="carrierPickupOk"><label for="pk-carrier"><strong>${esc(carrierOpt || 'Mobility City delivery (Wisconsin and Michigan)')}</strong>. Let a delivery partner pick it up from me and deliver it to a buyer in Wisconsin or Michigan. Only works if the item is in Wisconsin or Michigan. Your address is shared only with the delivery partner, only after a buyer requests delivery.</label></div>
+            <div class="check"><input type="checkbox" id="pk-carrier" name="carrierPickupOk"><label for="pk-carrier"><strong>${esc(carrierOpt || 'Mobility City delivery (Wisconsin and Michigan)')}</strong>. Let a delivery partner pick it up from me and deliver it to a buyer in Wisconsin or Michigan. Only works if the item is in Wisconsin or Michigan. To arrange pickup, enter your information on <a href="https://mobilitycity.com/appleton-green-bay-wi/" target="_blank" rel="noopener noreferrer">Mobility City's website</a>. Your address is shared only with the delivery partner, only after a buyer requests delivery.</label></div>
           </fieldset>
         </section>
 
@@ -772,6 +772,10 @@
     Promise.all([M.config(), M.api('listing', { id: p.new })]).then(arr => {
       const cfg = arr[0], L = arr[1].listing;
       if (!L.deliveryEligible || L.status !== 'Active') { app.innerHTML = M.errorBox('Delivery is not available for this item.') + '<p><a class="btn" href="browse.html">Browse listings</a></p>'; return; }
+      app.innerHTML = `<div class="notice notice-info"><p><strong>How to sign up.</strong> Delivery and pickup are arranged on Mobility City's website. Open it, then enter your information for what you need (delivery, pickup, or both). Include the item name and your ZIP code. Mobility City confirms the final price with you.</p></div>
+      <div class="item-row" style="margin-top:1rem"><div><h2 style="margin:0">${esc(M.title(L))}</h2><p style="margin:0">${esc(L.city)}, ${esc(L.state)}</p></div></div>
+      <p style="margin-top:1rem"><a class="btn" href="https://mobilitycity.com/appleton-green-bay-wi/" target="_blank" rel="noopener noreferrer">Sign up with Mobility City</a></p>`;
+      return;
       app.innerHTML = `
       <div class="notice notice-info"><p><strong>How it works.</strong> You request delivery and see a price. The delivery partner confirms a final quote. <strong>Nothing is charged until you approve that quote.</strong> The seller confirms where to pick it up. The driver photographs the item at pickup and delivery.</p></div>
       <div class="item-row" style="margin-top:1rem"><div class="thumb">${L.photos[0] ? `<img src="${esc(M.photoUrl(L.photos[0], 200))}" alt="" data-photo>` : M.icon(M.catIcon(L.category))}</div><div><h2 style="margin:0">${esc(M.title(L))}</h2><p style="margin:0">${esc(M.money(L.price, L.free))} &middot; ${esc(L.city)}, ${esc(L.state)}</p></div></div>

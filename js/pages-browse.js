@@ -451,7 +451,7 @@
             <fieldset style="margin-top:1rem"><legend>Add-ons</legend>${addonHtml}
               <div class="check"><input type="checkbox" id="ad-we" ${weekend ? 'checked' : ''}><label for="ad-we">Saturday delivery only</label></div>
               <div class="check"><input type="checkbox" id="ad-ru" ${rush ? 'checked' : ''}><label for="ad-ru">Rush (as soon as possible)</label></div></fieldset>
-            <a class="btn btn-block" href="delivery.html?new=${encodeURIComponent(L.id)}&zip=${encodeURIComponent(zip)}">Request this delivery</a>
+            <a class="btn btn-block" href="https://mobilitycity.com/appleton-green-bay-wi/" target="_blank" rel="noopener noreferrer">Sign up with Mobility City for delivery or pickup</a><p class="small" style="margin-top:.6rem"><strong>Next step:</strong> Mobility City's website opens in a new tab. Enter your information for what you need (delivery, pickup, or both). Include the item name and your ZIP code. Mobility City confirms the final price with you.</p>
             <p class="small muted" style="margin-top:.6rem">${esc(q.partnerName)} is an independent business. ${esc((window.__cfg && window.__cfg.carrierDisclosure) || '')}</p>`;
         }, err => { out.innerHTML = M.errorBox(err.message); });
       }
