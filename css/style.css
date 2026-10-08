@@ -410,3 +410,9 @@ h2 svg, h3 svg, h4 svg { width:1.1em; height:1.1em; vertical-align:-0.15em; marg
 .pw-wrap input { flex: 1; min-width: 0; }
 .pw-toggle { min-height: 48px; min-width: 76px; padding: 0 14px; border: 2px solid #7a97a5; border-radius: var(--radius-sm); background: var(--paper); color: var(--blue); font: inherit; font-weight: 700; cursor: pointer; }
 .pw-toggle:hover { background: #eef5f8; }
+
+/* legal tables */
+.table-wrap { overflow-x: auto; margin: 1rem 0; }
+.legal-table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+.legal-table th, .legal-table td { border: 1px solid var(--line, #c9d3d9); padding: 8px 10px; text-align: left; vertical-align: top; }
+.legal-table th { background: #eef4f7; }
