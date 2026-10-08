@@ -89,7 +89,7 @@
               <div class="field"><label for="f-rad">Within</label><select id="f-rad" name="radius"><option value="">Any distance</option><option>10</option><option>25</option><option>50</option><option>100</option><option>250</option></select></div>
             </div>
             <div class="check" ${preset === 'free' ? 'hidden' : ''}><input type="checkbox" id="f-free" name="free"><label for="f-free">Free items only</label></div>
-            <div class="check"><input type="checkbox" id="f-del" name="delivery"><label for="f-del">Wisconsin delivery available</label></div>
+            <div class="check"><input type="checkbox" id="f-del" name="delivery"><label for="f-del">Wisconsin and Michigan delivery available</label></div>
             <div class="check"><input type="checkbox" id="f-chk" name="checked"><label for="f-chk">Safety checked by Mobility City</label></div>
             <div class="field"><label for="f-sort">Sort by</label><select id="f-sort" name="sort"><option value="newest">Newest first</option><option value="priceAsc">Lowest price</option><option value="priceDesc">Highest price</option><option value="nearest">Nearest (needs ZIP)</option></select></div>
             <button class="btn btn-block" type="submit">Show results</button>
@@ -429,7 +429,7 @@
         if (L.deliveryEligible) { box.innerHTML = ''; }
         return;
       }
-      box.innerHTML = `<div class="side-card"><h2>${M.icon('truck')} Wisconsin delivery</h2>
+      box.innerHTML = `<div class="side-card"><h2>${M.icon('truck')} Delivery (WI &amp; MI)</h2>
         <p>Delivered by Mobility City, an independent delivery partner. See the price before you decide. Nothing is charged until you approve a final quote.</p>
         <form id="dq-form" novalidate><div class="field"><label for="dq-zip">ZIP code where it should be delivered</label><input id="dq-zip" inputmode="numeric" maxlength="5" autocomplete="postal-code"></div>
         <button class="btn btn-secondary btn-block" type="submit">Get a delivery estimate</button></form><div id="dq-out" aria-live="polite"></div></div>`;

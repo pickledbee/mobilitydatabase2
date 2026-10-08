@@ -252,7 +252,7 @@
           </div>
           <fieldset><legend>How can the buyer get it?</legend>
             ${otherPickups.map((o, i) => `<div class="check"><input type="checkbox" name="pickup" id="pk${i}" value="${esc(o)}"><label for="pk${i}">${esc(o)}</label></div>`).join('')}
-            <div class="check"><input type="checkbox" id="pk-carrier" name="carrierPickupOk"><label for="pk-carrier"><strong>${esc(carrierOpt || 'Mobility City delivery (Wisconsin)')}</strong>. Let a delivery partner pick it up from me and deliver it to a Wisconsin buyer. Only works if the item is in Wisconsin. Your address is shared only with the delivery partner, only after a buyer requests delivery.</label></div>
+            <div class="check"><input type="checkbox" id="pk-carrier" name="carrierPickupOk"><label for="pk-carrier"><strong>${esc(carrierOpt || 'Mobility City delivery (Wisconsin and Michigan)')}</strong>. Let a delivery partner pick it up from me and deliver it to a buyer in Wisconsin or Michigan. Only works if the item is in Wisconsin or Michigan. Your address is shared only with the delivery partner, only after a buyer requests delivery.</label></div>
           </fieldset>
         </section>
 
@@ -581,7 +581,7 @@
     }
     function tabDeliveries() {
       M.api('deliveryMine', {}).then(r => {
-        if (!r.items.length) { body.innerHTML = '<div class="empty"><h2>No deliveries</h2><p>When you request or confirm a Wisconsin delivery, it shows up here.</p></div>'; return; }
+        if (!r.items.length) { body.innerHTML = '<div class="empty"><h2>No deliveries</h2><p>When you request or confirm a delivery, it shows up here.</p></div>'; return; }
         body.innerHTML = r.items.map(D => `<article class="item-row"><div class="thumb">${D.photo ? `<img src="${esc(M.photoUrl(D.photo, 200))}" alt="" data-photo loading="lazy">` : M.icon('truck')}</div><div>
           <h3 style="margin:0 0 .2em"><a href="delivery.html?id=${encodeURIComponent(D.id)}">${esc(D.listingTitle)}</a></h3>
           <p style="margin:0"><span class="status-pill status-${esc(D.status.replace(/\s/g, ''))}">${esc(D.status)}</span> You are the ${esc(D.role)}. ${D.needsSellerConfirm ? '<strong>Action needed: confirm pickup details.</strong>' : ''}${D.canApprove ? '<strong>Your quote is ready.</strong>' : ''}</p>
@@ -762,7 +762,7 @@
     if (p.id) { return deliveryDetail(app, p.id); }
     app.innerHTML = M.loading();
     M.api('deliveryMine', {}).then(r => {
-      if (!r.items.length) { app.innerHTML = '<div class="empty"><h2>No deliveries yet</h2><p>On a Wisconsin listing that offers delivery, enter your ZIP code to see the price.</p><p><a class="btn" href="browse.html?delivery=1">See listings with delivery</a></p></div>'; return; }
+      if (!r.items.length) { app.innerHTML = '<div class="empty"><h2>No deliveries yet</h2><p>On a listing that offers delivery, enter your ZIP code to see the price.</p><p><a class="btn" href="browse.html?delivery=1">See listings with delivery</a></p></div>'; return; }
       app.innerHTML = r.items.map(D => `<article class="item-row"><div class="thumb">${D.photo ? `<img src="${esc(M.photoUrl(D.photo, 200))}" alt="" data-photo>` : M.icon('truck')}</div><div><h3 style="margin:0 0 .2em"><a href="delivery.html?id=${encodeURIComponent(D.id)}">${esc(D.listingTitle)}</a></h3><p style="margin:0"><span class="status-pill status-${esc(D.status.replace(/\s/g, ''))}">${esc(D.status)}</span> You are the ${esc(D.role)}.</p></div></article>`).join('');
     }, err => { app.innerHTML = M.errorBox(err.message); });
   };
@@ -782,7 +782,7 @@
           <div class="field"><label for="d-phone">Phone number the driver can call</label><input id="d-phone" name="buyerPhone" type="tel" autocomplete="tel" required></div>
           <div class="field"><label for="d-addr">Street address</label><input id="d-addr" name="address" type="text" maxlength="120" autocomplete="street-address" required></div>
           <div class="field"><label for="d-city">City</label><input id="d-city" name="city" type="text" maxlength="60" autocomplete="address-level2" required></div>
-          <div class="field"><label for="d-zip">ZIP code (Wisconsin only)</label><input id="d-zip" name="zip" inputmode="numeric" maxlength="5" autocomplete="postal-code" required value="${esc(/^\d{5}$/.test(p.zip || '') ? p.zip : '')}"></div>
+          <div class="field"><label for="d-zip">ZIP code (Wisconsin or Michigan)</label><input id="d-zip" name="zip" inputmode="numeric" maxlength="5" autocomplete="postal-code" required value="${esc(/^\d{5}$/.test(p.zip || '') ? p.zip : '')}"></div>
         </div>
         <h2>Getting it inside</h2>
         <div class="form-grid three">

@@ -216,7 +216,7 @@
       { key: 'Parts Only', label: 'Parts Only', text: 'Does not work safely as it is, or is missing key parts. Sold for repair or for parts. The buyer should not use it for mobility until it is repaired and checked by a qualified technician.' }
     ],
     states: ['AL','AK','AZ','AR','CA','CO','CT','DE','DC','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'],
-    pickupOptions: ['Buyer picks up', 'Seller can meet nearby', 'Mobility City delivery (Wisconsin)', 'Buyer arranges own transport'],
+    pickupOptions: ['Buyer picks up', 'Seller can meet nearby', 'Mobility City delivery (Wisconsin and Michigan)', 'Buyer arranges own transport'],
     disclaimer: 'Mobility Database is a listing service. We do not own, inspect, or sell the equipment, and we are not a medical provider. Buyers and sellers deal with each other directly.',
     carrierDisclosure: 'Delivery is performed by an independent delivery partner, not by Mobility Database.',
     allowedVideoHosts: ['youtube.com', 'youtu.be', 'vimeo.com']
@@ -409,7 +409,7 @@
       : M.icon(M.catIcon(L.category));
     var badges = '';
     if (L.carrierChecked) { badges += '<span class="badge badge-green">' + M.icon('shield') + 'Safety checked</span>'; }
-    if (L.deliveryEligible) { badges += '<span class="badge">' + M.icon('truck') + 'Wisconsin delivery</span>'; }
+    if (L.deliveryEligible) { badges += '<span class="badge">' + M.icon('truck') + 'WI &amp; MI delivery</span>'; }
     if (L.seller && L.seller.verified) { badges += '<span class="badge badge-green">' + M.icon('check') + 'Verified seller</span>'; }
     if (L.free) { badges += '<span class="badge badge-amber">Free</span>'; }
     var meta = [L.category, L.city + ', ' + L.state];
