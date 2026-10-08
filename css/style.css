@@ -59,8 +59,8 @@ small, .small { font-size: .9rem; }
 .skip-link:focus { top: 0; }
 
 .wrap { width: 100%; max-width: var(--max); margin: 0 auto; padding: 0 16px; }
-.section { padding: 2.2rem 0; }
-.section-tight { padding: 1.2rem 0; }
+.section { padding-top: 2.2rem; padding-bottom: 2.2rem; }
+.section-tight { padding-top: 1.2rem; padding-bottom: 1.2rem; }
 .band { background: var(--mist); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .band-ink { background: var(--ink); color: #fff; }
 .band-ink a { color: #bfe3f2; }
@@ -124,7 +124,7 @@ small, .small { font-size: .9rem; }
 label, .label { display: block; font-weight: 700; margin-bottom: 6px; }
 .field { margin-bottom: 1.1rem; }
 .hint { color: var(--ink-soft); font-size: .92rem; margin: 4px 0 0; max-width: 60ch; }
-input[type="text"], input[type="email"], input[type="tel"], input[type="number"], input[type="url"], input[type="date"], input[type="search"], input:not([type]), select, textarea {
+input[type="text"], input[type="email"], input[type="tel"], input[type="number"], input[type="url"], input[type="date"], input[type="search"], input[type="password"], input:not([type]), select, textarea {
   width: 100%; min-height: 48px; padding: 10px 12px; font: inherit; color: var(--ink); background: var(--paper); border: 2px solid #7a97a5; border-radius: var(--radius-sm);
 }
 textarea { min-height: 120px; resize: vertical; }
@@ -404,3 +404,9 @@ blockquote { margin: 0 0 1rem; }
 
 /* heading icons and untyped inputs */
 h2 svg, h3 svg, h4 svg { width:1.1em; height:1.1em; vertical-align:-0.15em; margin-right:.3em; flex:none; }
+
+/* password fields */
+.pw-wrap { display: flex; gap: 8px; align-items: stretch; }
+.pw-wrap input { flex: 1; min-width: 0; }
+.pw-toggle { min-height: 48px; min-width: 76px; padding: 0 14px; border: 2px solid #7a97a5; border-radius: var(--radius-sm); background: var(--paper); color: var(--blue); font: inherit; font-weight: 700; cursor: pointer; }
+.pw-toggle:hover { background: #eef5f8; }
