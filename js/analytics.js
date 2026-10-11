@@ -50,4 +50,9 @@
     var a = e.target && e.target.closest ? e.target.closest('a[href*="mobilitycity.com"]') : null;
     if (a) { gtag('event', 'mobility_city_click', { link_page: page }); }
   });
+  // count clicks on Amazon affiliate links (which category only, no personal data)
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[data-aff]') : null;
+    if (a) { gtag('event', 'affiliate_click', { link_page: page }); }
+  });
 })();
