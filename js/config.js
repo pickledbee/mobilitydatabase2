@@ -8,5 +8,7 @@
 */
 window.MDB_CONFIG = {
   API_URL: 'https://script.google.com/macros/s/AKfycbweiMhQyHRw9SJ8K1CybRc8A2GzrAphjC-J3cbjo0_l6pFJMt4aDdSUxO9G82NoZijstw/exec',
-  SITE_NAME: 'Mobility Database'
+  SITE_NAME: 'Mobility Database',
+  // Google Analytics 4 Measurement ID, like G-XXXXXXXXXX. Leave empty to keep analytics off.
+  GA_ID: ''
 };
