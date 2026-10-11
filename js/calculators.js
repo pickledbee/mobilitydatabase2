@@ -1,0 +1,128 @@
+/* Used Mobility Market - ramp length calculator and stairlift cost estimator.
+   Plain JavaScript. Runs only on the two calculator pages. Nothing typed here is sent anywhere. */
+(function () {
+  'use strict';
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function money(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
+  function track(tool) { try { if (typeof window.gtag === 'function') { window.gtag('event', 'calculator_used', { tool: tool }); } } catch (e) { /* ignore */ } }
+  function feet(inches) {
+    var ft = Math.floor(inches / 12 + 1e-9);
+    var inch = Math.round(inches - ft * 12);
+    if (inch === 12) { ft += 1; inch = 0; }
+    return ft + ' ft' + (inch ? ' ' + inch + ' in' : '');
+  }
+
+  // ------------------------------------------------------------ ramp
+  var rampForm = $('rc-form');
+  if (rampForm) {
+    var used = false;
+    var run = function (ev) {
+      if (ev) { ev.preventDefault(); }
+      var out = $('rc-out');
+      var rise = parseFloat($('rc-rise').value);
+      var ratio = parseInt($('rc-slope').value, 10);
+      var price = parseFloat($('rc-price').value);
+      if (!isFinite(rise) || rise <= 0) {
+        out.innerHTML = '<p class="muted">Enter the total rise in inches to see the result.</p>';
+        return;
+      }
+      if (rise > 120) {
+        out.innerHTML = '<div class="notice notice-warn"><p>That is more than 10 feet of rise. A ramp that tall is a major building project. Please talk to a qualified contractor.</p></div>';
+        return;
+      }
+      if (!used) { used = true; track('ramp'); }
+      var len = rise * ratio;
+      var runs = Math.max(1, Math.ceil(rise / 30 - 1e-9));
+      var landings = runs - 1;
+      var room = len / 12 + 5 * (runs + 1);
+      var h = '<h2 style="margin-top:0">Your ramp</h2>';
+      h += '<p class="price-big">' + esc(feet(len)) + '</p>';
+      h += '<p class="muted">of ramp surface at 1:' + ratio + ' for ' + esc(String(rise)) + ' inches of rise.</p>';
+      h += '<ul>';
+      h += '<li><strong>' + runs + (runs === 1 ? ' run' : ' runs') + '.</strong> A single run can rise at most 30 inches under the ADA guide' + (runs > 1 ? '. Yours needs a flat landing between runs.' : '.') + '</li>';
+      h += '<li><strong>Landings:</strong> a flat landing at the top, at the bottom, and ' + (landings ? landings + ' in between' : 'at any turn') + '. Each should be at least 5 ft by 5 ft (60 by 60 inches).</li>';
+      h += '<li><strong>Room needed in a straight line:</strong> about ' + esc(feet(room * 12)) + ', counting the ramp and landings.</li>';
+      h += '<li><strong>Width:</strong> at least 36 inches clear between the handrails.</li>';
+      h += '<li><strong>Handrails:</strong> ' + (rise > 6 ? 'on both sides, with edge protection along the sides.' : 'a rise of 6 inches or less does not need handrails under the ADA guide, but edge protection still matters.') + '</li>';
+      h += '</ul>';
+      if (isFinite(price) && price > 0) {
+        h += '<p><strong>Rough cost at ' + money(price) + ' per foot:</strong> ' + money(price * len / 12) + ' for the ramp surface. Landings, railings and installation are often priced separately, so ask for the total in writing.</p>';
+      }
+      h += '<h3>Compare slopes</h3><div class="table-wrap"><table class="legal-table"><thead><tr><th>Slope</th><th>Ramp length</th></tr></thead><tbody>';
+      [12, 16, 20].forEach(function (r) {
+        var sel = r === ratio;
+        h += '<tr><td>' + (sel ? '<strong>1:' + r + '</strong>' : '1:' + r) + '</td><td>' + (sel ? '<strong>' : '') + esc(feet(rise * r)) + (sel ? '</strong>' : '') + '</td></tr>';
+      });
+      h += '</tbody></table></div>';
+      h += '<p class="muted">1:12 is the steepest slope the ADA guide allows. A gentler slope is easier to push up and safer coming down, but takes more room.</p>';
+      out.innerHTML = h;
+    };
+    rampForm.addEventListener('submit', run);
+    ['rc-rise', 'rc-slope', 'rc-price'].forEach(function (id) { var el = $(id); el.addEventListener('input', function () { run(); }); el.addEventListener('change', function () { run(); }); });
+    run();
+  }
+
+  // ------------------------------------------------------------ stairlift
+  var liftForm = $('sl-form');
+  if (liftForm) {
+    var used2 = false;
+    var TYPES = {
+      straight: { label: 'New straight stairlift (one straight staircase)', lo: 3200, hi: 4500, buy: true },
+      curved1: { label: 'New curved stairlift, one 90-degree turn', lo: 9000, hi: 11000, buy: true },
+      curved: { label: 'New curved stairlift, several turns or landings', lo: 9000, hi: 15000, buy: true },
+      outdoor: { label: 'New outdoor straight stairlift', lo: 3500, hi: 7500, buy: true },
+      used: { label: 'Used or refurbished straight stairlift', lo: 2000, hi: 3200, buy: true },
+      rental: { label: 'Rental (straight stairlift)', rent: true }
+    };
+    var ADD = {
+      swivel: { lo: 300, hi: 500 },
+      fold: { lo: 200, hi: 400 },
+      heavy: { lo: 500, hi: 1500 },
+      warranty: { lo: 200, hi: 500 }
+    };
+    var run2 = function (ev) {
+      if (ev) { ev.preventDefault(); }
+      var out = $('sl-out');
+      var t = TYPES[$('sl-type').value];
+      if (!t) { return; }
+      if (!used2) { used2 = true; track('stairlift'); }
+      var h = '<h2 style="margin-top:0">Your ballpark</h2>';
+      var optsBox = $('sl-opts');
+      if (t.rent) {
+        if (optsBox) { optsBox.hidden = true; }
+        h += '<p class="price-big">$500 to $1,000 to set up</p>';
+        h += '<p>Then about <strong>$150 to $300 a month</strong>. Over 12 months that is roughly ' + money(500 + 150 * 12) + ' to ' + money(1000 + 300 * 12) + '.</p>';
+        h += '<p class="muted">Renting suits a short recovery. If you will need it for more than a year or two, buying new or used usually costs less.</p>';
+        out.innerHTML = h;
+        return;
+      }
+      if (optsBox) { optsBox.hidden = false; }
+      var lo = t.lo, hi = t.hi;
+      var note = [];
+      ['swivel', 'fold', 'heavy'].forEach(function (k) {
+        var el = $('sl-' + k);
+        if (el && el.checked) { lo += ADD[k].lo; hi += ADD[k].hi; note.push($('sl-' + k + '-label').textContent); }
+      });
+      if ($('sl-premium').checked) { lo *= 1.10; hi *= 1.15; note.push('Premium brand'); }
+      var loc = $('sl-loc').value;
+      if (loc === 'low') { lo *= 0.85; hi *= 0.90; }
+      if (loc === 'high') { lo *= 1.15; hi *= 1.25; }
+      if (loc === 'remote') { lo += 200; hi += 500; }
+      if ($('sl-warranty').checked) { lo += ADD.warranty.lo; hi += ADD.warranty.hi; note.push('Extended warranty'); }
+      h += '<p class="price-big">' + money(lo) + ' to ' + money(hi) + '</p>';
+      h += '<p class="muted">' + esc(t.label) + (t.buy && t !== TYPES.used ? ', installed.' : '.') + '</p>';
+      if (note.length) { h += '<p>Includes: ' + esc(note.join(', ')) + '.</p>'; }
+      h += '<h3>Costs after you buy</h3><ul>';
+      h += '<li><strong>Batteries:</strong> about $50 to $120 a pair, replaced every 2 to 3 years.</li>';
+      h += '<li><strong>Yearly service:</strong> about $150 for one visit. A maintenance contract is optional, at roughly $300 to $500 a year.</li>';
+      h += '</ul>';
+      if (t === TYPES.used) { h += '<div class="notice notice-warn"><p>Ask who installs it, whether it has a warranty, and whether the rail fits your stairs. Used lifts are usually sized for one staircase.</p></div>'; }
+      out.innerHTML = h;
+    };
+    liftForm.addEventListener('submit', run2);
+    liftForm.addEventListener('input', function () { run2(); });
+    liftForm.addEventListener('change', function () { run2(); });
+    run2();
+  }
+})();

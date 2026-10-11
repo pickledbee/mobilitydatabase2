@@ -7,3 +7,4 @@ Disallow: /delivery.html
 Disallow: /login.html
 Disallow: /unsubscribe.html
 Disallow: /create-listing.html
+Sitemap: https://usedmobilitymarket.com/sitemap.xml

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wheelchair Ramp Length Calculator | Used Mobility Market</title>
+<meta name="description" content="Free wheelchair ramp length calculator. Enter the rise and see the ramp length, landings, and room needed at 1:12, 1:16 and 1:20 slopes.">
+<link rel="canonical" href="https://usedmobilitymarket.com/ramp-calculator.html">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://drive.google.com https://*.googleusercontent.com https://*.google-analytics.com https://*.googletagmanager.com; connect-src https://script.google.com https://script.googleusercontent.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta name="theme-color" content="#0e2a38">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='10' fill='%230e2a38'/%3E%3Ccircle cx='24' cy='24' r='13' fill='none' stroke='%23bfe3f2' stroke-width='4'/%3E%3Ccircle cx='24' cy='24' r='3.5' fill='%23bfe3f2'/%3E%3Cpath d='M24 11v10M24 27v10M11 24h10M27 24h10' stroke='%23bfe3f2' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&amp;display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="static">
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="site-header"><div class="wrap">
+<a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect width="48" height="48" rx="10" fill="#0b5c86"/><circle cx="24" cy="24" r="13" fill="none" stroke="#fff" stroke-width="4"/><circle cx="24" cy="24" r="3.5" fill="#fff"/><path d="M24 11v10M24 27v10M11 24h10M27 24h10" stroke="#fff" stroke-width="3"/></svg><span>Mobility Database</span></a>
+<button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+<nav class="site-nav" id="site-nav" aria-label="Main">
+<a href="browse.html">Browse</a><a href="free-corner.html">Free Corner</a><a href="wanted.html">Wanted</a><a href="fit-finder.html">Fit Finder</a><a href="price-guide.html">Price Guide</a><a href="guides.html">Guides</a><a href="aging-in-place.html">Aging at Home</a>
+<a href="messages.html" data-nav-messages hidden>Messages</a><a href="admin.html" data-nav-admin hidden>Admin</a><a href="login.html" data-nav-account>Sign in</a>
+<a class="btn" href="create-listing.html">Sell equipment</a>
+</nav></div></header>
+<main id="main">
+<div class="band"><div class="wrap section-tight"><h1>Wheelchair Ramp Length Calculator</h1><p class="muted" style="margin:0">Enter the height of your steps. See how long the ramp needs to be.</p></div></div>
+<div class="wrap section"><div class="grid cols-2">
+<div class="card"><h2>Measure and enter</h2>
+<form id="rc-form" novalidate>
+<div class="field"><label for="rc-rise">Total rise, in inches</label><p class="hint" id="rc-rise-hint">Measure straight up from the ground to the top of the door threshold or porch floor. Include every step.</p><input id="rc-rise" name="rise" type="number" inputmode="decimal" min="1" max="120" step="0.25" aria-describedby="rc-rise-hint" placeholder="Example: 21"></div>
+<div class="field"><label for="rc-slope">Slope</label><select id="rc-slope" name="slope"><option value="12" selected>1:12 (the standard, steepest the ADA guide allows)</option><option value="16">1:16 (gentler)</option><option value="20">1:20 (gentlest)</option></select></div>
+<div class="field"><label for="rc-price">Price per foot, if you have one (optional)</label><p class="hint" id="rc-price-hint">From a quote or a product page. Leave it blank to skip.</p><input id="rc-price" name="price" type="number" inputmode="decimal" min="0" step="1" aria-describedby="rc-price-hint" placeholder="Example: 150"></div>
+<button class="btn btn-block" type="submit">Calculate</button>
+</form>
+<noscript><div class="notice notice-warn"><p>This calculator needs JavaScript. Without it, use this rule: ramp length in inches is the rise in inches times 12. A 21 inch rise needs 252 inches, which is 21 feet.</p></div></noscript>
+</div>
+<div class="card" id="rc-out" aria-live="polite"><p class="muted">Enter the total rise in inches to see the result.</p></div>
+</div>
+
+<div class="prose" style="margin-top:2rem">
+<h2>How the number works</h2>
+<p>The ADA guide allows a ramp to rise 1 inch for every 12 inches of length, written 1:12. So the ramp length in inches is the rise in inches times 12. Here are some examples at 1:12:</p>
+<div class="table-wrap"><table class="legal-table"><thead><tr><th>Rise</th><th>Ramp length</th><th>Runs</th></tr></thead><tbody>
+<tr><td>6 inches</td><td>6 ft</td><td>1</td></tr>
+<tr><td>12 inches</td><td>12 ft</td><td>1</td></tr>
+<tr><td>18 inches</td><td>18 ft</td><td>1</td></tr>
+<tr><td>24 inches</td><td>24 ft</td><td>1</td></tr>
+<tr><td>30 inches</td><td>30 ft</td><td>1</td></tr>
+<tr><td>36 inches</td><td>36 ft</td><td>2, with a landing between</td></tr>
+</tbody></table></div>
+<h2>Rules to know</h2>
+<ul>
+<li><strong>Slope:</strong> 1:12 at most. Gentler is easier.</li>
+<li><strong>Rise per run:</strong> 30 inches at most. A taller rise needs a flat landing, then another run.</li>
+<li><strong>Width:</strong> at least 36 inches clear between handrails.</li>
+<li><strong>Landings:</strong> flat at the top and bottom of every run. At a turn, at least 60 by 60 inches.</li>
+<li><strong>Handrails:</strong> on both sides when the rise is more than 6 inches, extending at least 12 inches past the top and bottom.</li>
+<li><strong>Edge protection:</strong> a curb, rail or wide surface so a wheel cannot slip off the side.</li>
+</ul>
+<p>These come from the federal ADA design guide for public buildings. Your home may follow different local rules, and some places need a permit. Check with your city, village or town building office before you build. Source: <a href="https://www.access-board.gov/ada/guides/chapter-4-ramps-and-curb-ramps/" rel="noopener">U.S. Access Board, ramps and curb ramps</a>.</p>
+<h2>Before you buy or build</h2>
+<ul>
+<li>Ask an occupational therapist what slope the person using the ramp can manage.</li>
+<li>Get at least two written quotes from licensed, insured contractors.</li>
+<li>Think about rain, snow and ice. Wisconsin winters make a surface with grip and a gentler slope worth the extra room.</li>
+<li>If you only need a ramp for a short time, ask about renting a modular ramp.</li>
+</ul>
+</div>
+<p style="margin-top:1.5rem"><div class="notice notice-info"><p><strong>Planning tool, not advice.</strong> This page gives estimates only. It is not medical, legal, building or financial advice. An occupational therapist or doctor can tell you what equipment suits the person who will use it, and a licensed contractor can give you a real quote.</p></div></p>
+<div class="callout" style="margin-top:1.5rem"><div><h2>Next steps</h2><p>Look for a used ramp, estimate a stairlift, or find local help in the Green Bay and Appleton area.</p></div><div class="stack"><a class="btn" href="browse.html">Browse used equipment</a><a class="btn btn-secondary" href="stairlift-cost.html">Stairlift cost</a><a class="btn btn-secondary" href="aging-in-place-green-bay-appleton.html">Local help</a></div></div></div>
+</main>
+<footer class="site-footer"><div class="wrap">
+<div class="footer-grid">
+<div><h2>Mobility Database</h2><p>Used mobility equipment, listed by people, with honest grades and fewer surprises.</p></div>
+<div><h2>Explore</h2><ul class="footer-links"><li><a href="browse.html">Browse equipment</a></li><li><a href="free-corner.html">Free Corner</a></li><li><a href="wanted.html">Wanted Board</a></li><li><a href="fit-finder.html">Fit Finder</a></li><li><a href="price-guide.html">Price Guide</a></li><li><a href="passport.html">Equipment Passport</a></li><li><a href="directory.html">Local businesses</a></li><li><a href="guides.html">Free guides</a></li><li><a href="ramp-calculator.html">Ramp calculator</a></li><li><a href="stairlift-cost.html">Stairlift cost</a></li><li><a href="aging-in-place.html">Aging in place guides</a></li><li><a href="estate.html">Estates and downsizing</a></li><li><a href="success-stories.html">Success stories</a></li></ul></div>
+<div><h2>Company</h2><ul class="footer-links"><li><a href="contact.html">Contact us</a></li><li><a href="terms.html">Terms of Use</a></li><li><a href="delivery-terms.html">Delivery Terms</a></li><li><a href="seller-terms.html">Seller Agreement</a></li><li><a href="buyer-terms.html">Buyer Agreement</a></li><li><a href="privacy.html">Privacy Policy</a></li><li><a href="takedown.html">Copyright &amp; complaints</a></li><li><a href="cookies-data.html">Cookies &amp; data</a></li><li><a href="prohibited.html">Listing rules</a></li><li><a href="create-listing.html">Sell equipment</a></li><li><a href="login.html">Sign in</a></li></ul></div>
+<div><h2>Weekly update</h2><p>New listings and price drops, once a week. Free.</p>
+<form id="footer-subscribe" novalidate><div class="field"><label for="fs-email">Email address</label><input id="fs-email" type="email" autocomplete="email" required></div>
+<div class="field"><label for="fs-role">I am</label><select id="fs-role" name="role"><option value="buyer">Looking to buy</option><option value="seller">Looking to sell</option><option value="caregiver">A caregiver or family member</option><option value="dealer">A business</option></select></div>
+<div class="check"><input type="checkbox" id="fs-consent" required><label for="fs-consent">Yes, email me the weekly update. I can unsubscribe at any time.</label></div>
+<div class="hc-slot"></div><button class="btn btn-light btn-block" type="submit">Sign me up</button></form></div>
+</div>
+<p class="disclaimer" data-disclaimer>Mobility Database is a listing service. We do not own, inspect, or sell the equipment, and we are not a medical provider. Buyers and sellers deal with each other directly. Nothing here is medical or legal advice.</p>
+<p class="small">&copy; 2026 Mobility Database. All rights reserved.</p>
+</div></footer>
+<script src="js/config.js" defer></script>
+<script src="js/analytics.js" defer></script>
+<script src="js/app.js" defer></script>
+<script src="js/calculators.js" defer></script>
+</body></html>
