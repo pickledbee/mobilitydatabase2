@@ -13,7 +13,60 @@
     return ft + ' ft' + (inch ? ' ' + inch + ' in' : '');
   }
 
+
+  // ------------------------------------------------------------ optional quote request
+  // Shown only after a result appears. Nothing is sent unless the visitor ticks the box and presses the button.
+  function leadForm(boxId, tool, label, getSummary) {
+    var box = $(boxId);
+    if (!box) { return { show: function () {} }; }
+    var built = false, hc = null, sent = false;
+    function build() {
+      built = true;
+      box.innerHTML =
+        '<h2 style="margin-top:0">Want free quotes from local providers?</h2>' +
+        '<p>This is optional. Tell us where you are and we will pass your request to ' + esc(label) + ' near you so they can contact you. You are under no obligation.</p>' +
+        '<form id="' + boxId + '-form" novalidate>' +
+        '<div class="field"><label for="' + boxId + '-name">Your name</label><input id="' + boxId + '-name" type="text" autocomplete="name" maxlength="80"></div>' +
+        '<div class="field"><label for="' + boxId + '-email">Email address</label><input id="' + boxId + '-email" type="email" autocomplete="email" maxlength="120"></div>' +
+        '<div class="field"><label for="' + boxId + '-phone">Phone (optional)</label><input id="' + boxId + '-phone" type="tel" autocomplete="tel" maxlength="20"></div>' +
+        '<div class="field"><label for="' + boxId + '-zip">ZIP code</label><input id="' + boxId + '-zip" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="5"></div>' +
+        '<div class="check"><input type="checkbox" id="' + boxId + '-ok"><label for="' + boxId + '-ok">I agree that Used Mobility Market may share my name, email, phone, ZIP code and the details above with ' + esc(label) + ' so they can contact me about this project. I understand Used Mobility Market does not install, sell or guarantee their work.</label></div>' +
+        '<div class="hc-slot"></div>' +
+        '<div class="form-error" role="alert" hidden></div>' +
+        '<button class="btn btn-block" type="submit">Send my request</button>' +
+        '</form>';
+      var form = $(boxId + '-form');
+      var M = window.MDB;
+      if (!M || !M.api || !M.humanCheck) { box.hidden = true; return; }
+      var slot = box.querySelector('.hc-slot');
+      $(boxId + '-email').addEventListener('focus', function () { if (!hc) { hc = M.humanCheck(slot); } }, { once: true });
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var err = box.querySelector('.form-error');
+        function fail(m) { err.textContent = m; err.hidden = false; err.classList.add('notice', 'notice-warn'); }
+        err.hidden = true;
+        var name = $(boxId + '-name').value.trim(), email = $(boxId + '-email').value.trim(), phone = $(boxId + '-phone').value.trim(), zip = $(boxId + '-zip').value.trim();
+        if (!name) { return fail('Please enter your name.'); }
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { return fail('Please enter a valid email address.'); }
+        if (!/^\d{5}$/.test(zip)) { return fail('Please enter your 5 digit ZIP code.'); }
+        if (!$(boxId + '-ok').checked) { return fail('Please tick the box to let us share your request.'); }
+        if (!hc) { hc = M.humanCheck(slot); }
+        var v = hc.values();
+        var btn = form.querySelector('button[type="submit"]');
+        btn.disabled = true; btn.textContent = 'Sending...';
+        M.api('projectLead', { tool: tool, name: name, email: email, phone: phone, zip: zip, details: getSummary(), consentShare: true, hp: v.hp, ch: v.ch }, { noToken: true }).then(function () {
+          sent = true;
+          try { if (typeof window.gtag === 'function') { window.gtag('event', 'quote_request', { tool: tool }); } } catch (x) { /* ignore */ }
+          box.innerHTML = '<div class="notice notice-ok" role="status"><p><strong>Thank you.</strong> Your request is in. We sent a confirmation to your email. A local provider will contact you directly.</p></div>';
+        }, function (ex) { btn.disabled = false; btn.textContent = 'Send my request'; hc.reset(); fail(ex && ex.message ? ex.message : 'Could not send. Please try again.'); });
+      });
+    }
+    return { show: function () { if (sent) { return; } if (!built) { build(); } box.hidden = false; } };
+  }
+
   // ------------------------------------------------------------ ramp
+  var rampSummary = '';
+  var rampLead = leadForm('rc-lead', 'ramp', 'local ramp builders and installers', function () { return rampSummary; });
   var rampForm = $('rc-form');
   if (rampForm) {
     var used = false;
@@ -57,6 +110,8 @@
       h += '</tbody></table></div>';
       h += '<p class="muted">1:12 is the steepest slope the ADA guide allows. A gentler slope is easier to push up and safer coming down, but takes more room.</p>';
       out.innerHTML = h;
+      rampSummary = 'Ramp project: ' + rise + ' inch rise, 1:' + ratio + ' slope, about ' + feet(len) + ' of ramp, ' + runs + (runs === 1 ? ' run.' : ' runs.');
+      rampLead.show();
     };
     rampForm.addEventListener('submit', run);
     ['rc-rise', 'rc-slope', 'rc-price'].forEach(function (id) { var el = $(id); el.addEventListener('input', function () { run(); }); el.addEventListener('change', function () { run(); }); });
@@ -64,6 +119,8 @@
   }
 
   // ------------------------------------------------------------ stairlift
+  var liftSummary = '';
+  var liftLead = leadForm('sl-lead', 'stairlift', 'local stairlift and mobility providers', function () { return liftSummary; });
   var liftForm = $('sl-form');
   if (liftForm) {
     var used2 = false;
@@ -95,6 +152,8 @@
         h += '<p>Then about <strong>$150 to $300 a month</strong>. Over 12 months that is roughly ' + money(500 + 150 * 12) + ' to ' + money(1000 + 300 * 12) + '.</p>';
         h += '<p class="muted">Renting suits a short recovery. If you will need it for more than a year or two, buying new or used usually costs less.</p>';
         out.innerHTML = h;
+        liftSummary = 'Stairlift project: ' + t.label + '.';
+        liftLead.show();
         return;
       }
       if (optsBox) { optsBox.hidden = false; }
@@ -119,6 +178,8 @@
       h += '</ul>';
       if (t === TYPES.used) { h += '<div class="notice notice-warn"><p>Ask who installs it, whether it has a warranty, and whether the rail fits your stairs. Used lifts are usually sized for one staircase.</p></div>'; }
       out.innerHTML = h;
+      liftSummary = 'Stairlift project: ' + t.label + (note.length ? ' (' + note.join(', ') + ')' : '') + '. Area: ' + $('sl-loc').options[$('sl-loc').selectedIndex].text + '. Ballpark shown: ' + money(lo) + ' to ' + money(hi) + '.';
+      liftLead.show();
     };
     liftForm.addEventListener('submit', run2);
     liftForm.addEventListener('input', function () { run2(); });
