@@ -1,4 +1,4 @@
-/* Mobility Database - administrator dashboard.
+/* Used Mobility Market - administrator dashboard.
    Every action here is checked again on the server. Hiding a button is not security. */
 (function () {
   'use strict';

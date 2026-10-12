@@ -1,4 +1,4 @@
-/* Mobility Database - shared code used by every page.
+/* Used Mobility Market - shared code used by every page.
    Plain JavaScript, no libraries. Talks to the Google Apps Script web app named in config.js. */
 (function () {
   'use strict';
@@ -205,7 +205,7 @@
 
   // ------------------------------------------------------------------ config (with offline fallback)
   var FALLBACK = {
-    siteName: 'Mobility Database', supportEmail: '', offline: true, ratesConfirmed: false, maxPhotos: 6, maxPhotoBytes: 3145728,
+    siteName: 'Used Mobility Market', supportEmail: '', offline: true, ratesConfirmed: false, maxPhotos: 6, maxPhotoBytes: 3145728,
     categories: ['Mobility Scooter', 'Power Wheelchair', 'Manual Wheelchair', 'Walker or Rollator', 'Lift or Stair Lift', 'Ramp', 'Vehicle Lift or Hand Controls', 'Bathroom Safety', 'Bed or Lift Chair', 'Parts and Accessories'].map(function (n) {
       return { name: n, serialRequired: ['Walker or Rollator', 'Ramp', 'Bathroom Safety', 'Parts and Accessories'].indexOf(n) === -1 };
     }),
@@ -216,9 +216,9 @@
       { key: 'Parts Only', label: 'Parts Only', text: 'Does not work safely as it is, or is missing key parts. Sold for repair or for parts. The buyer should not use it for mobility until it is repaired and checked by a qualified technician.' }
     ],
     states: ['AL','AK','AZ','AR','CA','CO','CT','DE','DC','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'],
-    pickupOptions: ['Buyer picks up', 'Seller can meet nearby', 'Mobility City delivery (Wisconsin and Michigan)', 'Buyer arranges own transport'],
-    disclaimer: 'Mobility Database is a listing service. We do not own, inspect, or sell the equipment, and we are not a medical provider. Buyers and sellers deal with each other directly.',
-    carrierDisclosure: 'Delivery is performed by an independent delivery partner, not by Mobility Database.',
+    pickupOptions: ['Buyer picks up', 'Seller can meet nearby', 'Buyer arranges own transport'],
+    disclaimer: 'Used Mobility Market is an independent classified-ad platform. We do not own, sell, purchase, inspect, store, transport, or deliver listed equipment. We do not guarantee the condition, safety, ownership, or suitability of listed equipment.',
+    carrierDisclosure: 'Transportation is arranged directly between you and an independent provider, not by Used Mobility Market.',
     allowedVideoHosts: ['youtube.com', 'youtu.be', 'vimeo.com']
   };
   var cfgPromise = null;
@@ -409,8 +409,6 @@
       : M.icon(M.catIcon(L.category));
     var badges = '';
     if (L.carrierChecked) { badges += '<span class="badge badge-green">' + M.icon('shield') + 'Safety checked</span>'; }
-    if (L.deliveryEligible) { badges += '<span class="badge">' + M.icon('truck') + 'WI &amp; MI delivery</span>'; }
-    if (L.seller && L.seller.verified) { badges += '<span class="badge badge-green">' + M.icon('check') + 'Verified seller</span>'; }
     if (L.free) { badges += '<span class="badge badge-amber">Free</span>'; }
     var meta = [L.category, L.city + ', ' + L.state];
     if (L.distanceMiles !== undefined && L.distanceMiles !== null) { meta.push(L.distanceMiles + ' mi away'); }

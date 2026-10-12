@@ -1,4 +1,4 @@
-/* Mobility Database - account pages:
+/* Used Mobility Market - account pages:
    login, create listing, wanted board, dashboard, messages, delivery, unsubscribe. */
 (function () {
   'use strict';
@@ -199,7 +199,7 @@
         </section>
 
         <section data-step="2" hidden><h2>Condition</h2>
-          <fieldset><legend>Pick the grade that fits best. Be honest. Honest grades sell faster and prevent disputes.</legend>
+          <fieldset><legend>Pick the grade that fits best. The grade is your own description of the item. This site does not inspect or check it, so describe it accurately.</legend>
             <div class="grade-pick">${cfg.grades.map(g => `<label class="grade-opt"><input type="radio" name="grade" value="${esc(g.key)}"><span class="grade ${M.gradeClass(g.key)}" aria-hidden="true">${esc(M.gradeLetter(g.key))}</span><span><strong>${esc(g.label)}</strong><p>${esc(g.text)}</p></span></label>`).join('')}</div>
           </fieldset>
           <fieldset><legend>Seller checklist (all four are required)</legend>
@@ -252,7 +252,7 @@
           </div>
           <fieldset><legend>How can the buyer get it?</legend>
             ${otherPickups.map((o, i) => `<div class="check"><input type="checkbox" name="pickup" id="pk${i}" value="${esc(o)}"><label for="pk${i}">${esc(o)}</label></div>`).join('')}
-            <div class="check"><input type="checkbox" id="pk-carrier" name="carrierPickupOk"><label for="pk-carrier"><strong>${esc(carrierOpt || 'Mobility City delivery (Wisconsin and Michigan)')}</strong>. Let a delivery partner pick it up from me and deliver it to a buyer in Wisconsin or Michigan. Only works if the item is in Wisconsin or Michigan. To arrange pickup, enter your information on <a href="https://mobilitycity.com/appleton-green-bay-wi/" target="_blank" rel="noopener noreferrer">Mobility City's website</a>. Your address is shared only with the delivery partner, only after a buyer requests delivery.</label></div>
+            <div class="check" hidden><input type="checkbox" id="pk-carrier" name="carrierPickupOk"><label for="pk-carrier"><strong>${esc(carrierOpt || 'Mobility City delivery (Wisconsin and Michigan)')}</strong>. Let a delivery partner pick it up from me and deliver it to a buyer in Wisconsin or Michigan. Only works if the item is in Wisconsin or Michigan. To arrange pickup, enter your information on <a href="https://mobilitycity.com/appleton-green-bay-wi/" target="_blank" rel="noopener noreferrer">Mobility City's website</a>. Your address is shared only with the delivery partner, only after a buyer requests delivery.</label></div>
           </fieldset>
         </section>
 
@@ -414,7 +414,7 @@
           app.innerHTML = `<div class="notice notice-ok" role="status"><h2 style="margin-top:0">${live ? 'Your listing is live' : 'Thank you. Your listing was received'}</h2>
             <p>${live ? 'Buyers can see it now.' : 'A person checks every new seller\'s first listing before it goes live. We will email you as soon as it is approved.'}</p></div>
             <p><a class="btn" href="${live ? 'listing.html?id=' + encodeURIComponent(r.listingId) : 'dashboard.html'}">${live ? 'See your listing' : 'Go to My account'}</a> <a class="btn btn-secondary" href="create-listing.html">List another item</a></p>
-            <div class="callout" style="margin-top:1.4rem"><div><h2>Sell faster</h2><p>Reply quickly to messages, keep your price fair, and mark the item sold when it goes. A Verified Seller badge appears after your first completed sale.</p></div></div>`;
+            <div class="callout" style="margin-top:1.4rem"><div><h2>Sell faster</h2><p>Reply quickly to messages, keep your price fair, and mark the item sold when it goes.</p></div></div>`;
           window.scrollTo({ top: 0 });
         }, err => { done(); M.showError(f, err.message); });
       });
@@ -527,12 +527,12 @@
   M.pages.dashboard = function () {
     if (!M.requireLogin()) { return; }
     const app = $('#app');
-    const TABS = [['listings', 'My listings'], ['saved', 'Saved'], ['alerts', 'Alerts'], ['wanted', 'Wanted'], ['deliveries', 'Deliveries'], ['profile', 'Profile']];
+    const TABS = [['listings', 'My listings'], ['saved', 'Saved'], ['alerts', 'Alerts'], ['wanted', 'Wanted'], ['profile', 'Profile']];
     app.innerHTML = `<div id="d-hello" class="muted" style="margin-bottom:1rem"></div>
       <div class="tabs" role="tablist" aria-label="My account">${TABS.map(t => `<button type="button" role="tab" id="tab-${t[0]}" data-tab="${t[0]}" aria-selected="false">${esc(t[1])}</button>`).join('')}</div>
       <div id="d-body" role="tabpanel" tabindex="-1"></div>`;
     let me = M.user();
-    M.api('me', {}).then(r => { me = r.user; M.setUser(me); $('#d-hello').innerHTML = `Signed in as <strong>${esc(me.email)}</strong>${me.verifiedSeller ? ' <span class="badge badge-green">Verified seller</span>' : ''}${me.isAdmin ? ' &middot; <a href="admin.html">Admin</a>' : ''}`; const prof = $('#tab-profile'); if (prof && window.location.hash === '#profile') { render('profile'); } }, () => {});
+    M.api('me', {}).then(r => { me = r.user; M.setUser(me); $('#d-hello').innerHTML = `Signed in as <strong>${esc(me.email)}</strong>${me.isAdmin ? ' &middot; <a href="admin.html">Admin</a>' : ''}`; const prof = $('#tab-profile'); if (prof && window.location.hash === '#profile') { render('profile'); } }, () => {});
 
     const body = $('#d-body');
     function render(tab) {

@@ -1,4 +1,4 @@
-/* Mobility Database - public browsing pages:
+/* Used Mobility Market - public browsing pages:
    home, browse, free corner, fit finder, listing detail, price guide, equipment passport. */
 (function () {
   'use strict';
@@ -89,8 +89,8 @@
               <div class="field"><label for="f-rad">Within</label><select id="f-rad" name="radius"><option value="">Any distance</option><option>10</option><option>25</option><option>50</option><option>100</option><option>250</option></select></div>
             </div>
             <div class="check" ${preset === 'free' ? 'hidden' : ''}><input type="checkbox" id="f-free" name="free"><label for="f-free">Free items only</label></div>
-            <div class="check"><input type="checkbox" id="f-del" name="delivery"><label for="f-del">Wisconsin and Michigan delivery available</label></div>
-            <div class="check"><input type="checkbox" id="f-chk" name="checked"><label for="f-chk">Safety checked by Mobility City</label></div>
+            <div class="check" hidden><input type="checkbox" id="f-del" name="delivery"><label for="f-del">Wisconsin and Michigan delivery available</label></div>
+            <div class="check" hidden><input type="checkbox" id="f-chk" name="checked"><label for="f-chk">Safety checked by Mobility City</label></div>
             <div class="field"><label for="f-sort">Sort by</label><select id="f-sort" name="sort"><option value="newest">Newest first</option><option value="priceAsc">Lowest price</option><option value="priceDesc">Highest price</option><option value="nearest">Nearest (needs ZIP)</option></select></div>
             <button class="btn btn-block" type="submit">Show results</button>
             <p><button class="btn-link" type="button" id="f-reset" style="background:none;border:0;font:inherit;cursor:pointer;min-height:48px;text-decoration:underline;color:var(--blue)">Clear everything</button></p>
@@ -246,7 +246,7 @@
     });
 
     function render(cfg, L) {
-      document.title = M.title(L) + ' | ' + (cfg.siteName || 'Mobility Database');
+      document.title = M.title(L) + ' | ' + (cfg.siteName || 'Used Mobility Market');
       const gradeInfo = cfg.grades.find(g => g.key === L.grade);
       const photos = L.photos || [];
       const notLive = L.status !== 'Active';
@@ -314,17 +314,16 @@
             <div class="price-big">${esc(M.money(L.price, L.free))}${L.previousPrice ? ` <s class="small muted" style="font-weight:400"><span class="sr-only">was </span>${esc(M.money(L.previousPrice))}</s>` : ''}</div>
             <p class="muted" style="margin:.4rem 0 .8rem">${esc(L.city)}, ${esc(L.state)} &middot; listed ${esc(M.date(L.createdAt))}</p>
             <div class="seller-line"><strong>${esc(L.seller.name)}</strong>
-              ${L.seller.verified ? `<span class="badge badge-green">${M.icon('check')}Verified seller</span>` : ''}
-              ${L.carrierChecked ? `<span class="badge badge-green">${M.icon('shield')}Safety checked</span>` : ''}</div>
+</div>
             <p class="small muted" style="margin:.5rem 0 0">${L.seller.completedSales ? L.seller.completedSales + ' completed ' + (L.seller.completedSales === 1 ? 'sale' : 'sales') + ' on this site. ' : ''}${L.seller.since ? 'Member since ' + esc(L.seller.since) + '.' : ''}</p>
-            ${L.carrierChecked ? `<p class="small" style="margin:.5rem 0 0">A Mobility City technician checked this item${L.carrierCheckedDate ? ' on ' + esc(M.date(L.carrierCheckedDate)) : ''}. It is a visual and function check, not a guarantee.</p>` : ''}
           </div>
           <div id="owner-box"></div>
           <div id="contact-box"></div>
           <div id="delivery-box"></div>
           <div id="partner-box"></div>
+          <div class="side-card" id="independent-notice"><h2>Independent Marketplace Notice</h2><p class="small">UsedMobilityMarket.com is an independent classified-ad platform. We do not own, sell, purchase, inspect, store, transport, or deliver listed equipment. All transactions, payments, inspections, pickup arrangements, and deliveries are handled independently by buyers, sellers, and any third-party service providers they choose. We do not guarantee the condition, safety, ownership, or suitability of listed equipment.</p></div>
           <div class="side-card"><h2>${M.icon('shield')} Staying safe</h2><ul class="small">
-            <li>Look at the item in person, or use delivery with photo records.</li>
+            <li>Look at the item in person before you pay.</li>
             <li>Meet in a public place, and bring someone with you.</li>
             <li>Never pay with gift cards, wire transfers, or a check for more than the price.</li>
             <li>Test the brakes, controls, and battery before you pay.</li>
@@ -425,53 +424,17 @@
     // ---- delivery estimate
     function deliveryBox(L) {
       const box = $('#delivery-box');
-      if (!L.deliveryEligible || !L.carrierAvailable) {
-        if (L.deliveryEligible) { box.innerHTML = ''; }
-        return;
-      }
-      box.innerHTML = `<div class="side-card"><h2>${M.icon('truck')} Delivery (WI &amp; MI)</h2>
-        <p>Delivered by Mobility City, an independent delivery partner. See the price before you decide. Nothing is charged until you approve a final quote.</p>
-        <form id="dq-form" novalidate><div class="field"><label for="dq-zip">ZIP code where it should be delivered</label><input id="dq-zip" inputmode="numeric" maxlength="5" autocomplete="postal-code"></div>
-        <button class="btn btn-secondary btn-block" type="submit">Get a delivery estimate</button></form><div id="dq-out" aria-live="polite"></div></div>`;
-      const f = $('#dq-form'), out = $('#dq-out');
-      let addons = null, selected = [], stairs = 0, weekend = false, rush = false;
-      function quote() {
-        M.clearError(f);
-        const zip = $('#dq-zip').value.trim();
-        if (!/^\d{5}$/.test(zip)) { M.showError(f, 'Please enter a 5-digit ZIP code.'); return; }
-        out.innerHTML = M.loading('Working out the price...');
-        M.api('quote', { listingId: L.id, buyerZip: zip, services: selected, stairs: stairs, weekend: weekend, rush: rush }, { noToken: true }).then(r => {
-          const q = r.quote; addons = r.addons || addons;
-          if (!q.available) { out.innerHTML = `<div class="notice notice-warn"><p>${esc(q.reason)}</p></div>`; return; }
-          const rows = q.lines.map(l => `<tr><td>${esc(l.label)}</td><td>${l.amount ? esc(M.moneyExact(l.amount)) : ''}</td></tr>`).join('');
-          const addonHtml = (addons || []).map(a => `<div class="check"><input type="checkbox" data-addon="${esc(a.key)}" id="ad-${esc(a.key)}" ${selected.includes(a.key) ? 'checked' : ''}><label for="ad-${esc(a.key)}">${esc(a.label)}${a.key === 'STAIRS' ? '' : a.amount > 0 ? ' (+' + esc(M.moneyExact(a.amount)) + ')' : ' (priced by the carrier)'}</label></div>${a.key === 'STAIRS' && selected.includes('STAIRS') ? `<div class="field" style="margin-left:2.2rem"><label for="ad-fl">Flights of stairs (each flight)</label><input id="ad-fl" type="number" min="0" max="10" value="${stairs}" style="max-width:120px"></div>` : ''}`).join('');
-          out.innerHTML = `<table class="quote-table" style="margin-top:1rem"><tbody>${rows}<tr class="total"><td>Total${q.estimate ? ' (estimate)' : ''}</td><td>${esc(M.moneyExact(q.total))}</td></tr></tbody></table>
-            ${q.estimate ? '<p class="small muted">This is an estimate. The delivery partner confirms the final price before you approve anything.</p>' : ''}
-            ${q.needsManual ? '<p class="small muted">The delivery partner will give you a final price for the items marked above.</p>' : ''}
-            <fieldset style="margin-top:1rem"><legend>Add-ons</legend>${addonHtml}
-              <div class="check"><input type="checkbox" id="ad-we" ${weekend ? 'checked' : ''}><label for="ad-we">Saturday delivery only</label></div>
-              <div class="check"><input type="checkbox" id="ad-ru" ${rush ? 'checked' : ''}><label for="ad-ru">Rush (as soon as possible)</label></div></fieldset>
-            <a class="btn btn-block" href="https://mobilitycity.com/appleton-green-bay-wi/" target="_blank" rel="noopener noreferrer">Sign up with Mobility City for delivery or pickup</a><p class="small" style="margin-top:.6rem"><strong>Next step:</strong> Mobility City's website opens in a new tab. Enter your information for what you need (delivery, pickup, or both). Include the item name and your ZIP code. Mobility City confirms the final price with you.</p>
-            <p class="small muted" style="margin-top:.6rem">${esc(q.partnerName)} is an independent business. ${esc((window.__cfg && window.__cfg.carrierDisclosure) || '')}</p>`;
-        }, err => { out.innerHTML = M.errorBox(err.message); });
-      }
-      M.config().then(c => { window.__cfg = c; });
-      f.addEventListener('submit', e => { e.preventDefault(); quote(); });
-      out.addEventListener('change', e => {
-        const t = e.target;
-        if (t.hasAttribute('data-addon')) {
-          const k = t.getAttribute('data-addon');
-          selected = selected.filter(x => x !== k); if (t.checked) { selected.push(k); }
-          if (k === 'STAIRS' && t.checked && !stairs) { stairs = 1; }
-          quote();
-        } else if (t.id === 'ad-fl') { stairs = Math.max(0, Math.min(10, Number(t.value) || 0)); quote(); }
-        else if (t.id === 'ad-we') { weekend = t.checked; quote(); }
-        else if (t.id === 'ad-ru') { rush = t.checked; quote(); }
-      });
+      if (!box) { return; }
+      box.innerHTML = `<div class="side-card"><h2>${M.icon('truck')} Need Pickup or Delivery?</h2>
+        <p class="small">Need help transporting mobility equipment? You may contact an independent mobility-equipment transportation provider, such as Mobility City, to ask about availability, pricing, and service options. All arrangements are made directly between you and the provider.</p>
+        <p class="small muted">${esc((window.MDB_CONFIG || {}).SITE_NAME || 'This site')} is not affiliated with Mobility City and does not arrange, price, or guarantee any transportation.</p>
+        <a class="btn btn-secondary btn-block" href="https://mobilitycity.com/appleton-green-bay-wi/" target="_blank" rel="noopener noreferrer">Visit Mobility City's website</a></div>`;
+      return;
     }
 
     // ---- partners (repair, inspection, dealers)
     function partnerBox(L) {
+      if (!(window.MDB_CONFIG || {}).LEADS_ENABLED) { return; }
       const box = $('#partner-box');
       const ps = L.partners || [];
       if (!ps.length || L.isOwner) { return; }

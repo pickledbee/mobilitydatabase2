@@ -18,7 +18,7 @@
   // Shown only after a result appears. Nothing is sent unless the visitor ticks the box and presses the button.
   function leadForm(boxId, tool, label, getSummary) {
     var box = $(boxId);
-    if (!box) { return { show: function () {} }; }
+    if (!box || !(window.MDB_CONFIG || {}).LEADS_ENABLED) { return { show: function () {} }; }
     var built = false, hc = null, sent = false;
     function build() {
       built = true;

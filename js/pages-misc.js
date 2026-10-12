@@ -1,4 +1,4 @@
-/* Mobility Database - forms and directory pages:
+/* Used Mobility Market - forms and directory pages:
    estate and downsizing request, contact, local directory, free guides. */
 (function () {
   'use strict';
@@ -88,7 +88,7 @@
         <div class="field"><label for="dr-s">State</label><select id="dr-s"></select></div>
         <button class="btn" type="submit">Show businesses</button></form></div>
         <div id="dr-list" style="margin-top:1.2rem"></div>
-        <p class="med-note">These are independent businesses. Mobility Database does not own, supervise, or guarantee them. Check references and get written prices before you hire anyone.</p>`;
+        <p class="med-note">These are independent businesses. Used Mobility Market does not own, supervise, or guarantee them. Check references and get written prices before you hire anyone.</p>`;
       M.fillSelect($('#dr-s'), cfg.states, 'Any state');
       const p = M.params();
       if (p.type) { $('#dr-t').value = p.type; }
@@ -101,7 +101,7 @@
             <p class="muted small" style="margin:0 0 .4em">${esc([x.city, x.state].filter(Boolean).join(', '))}${x.states ? ' &middot; serves ' + esc(x.states) : ''}</p>
             ${x.description ? `<p style="margin:0 0 .4em">${esc(x.description)}</p>` : ''}
             <div class="item-actions">${x.phone ? `<a class="btn btn-secondary btn-sm" href="tel:${esc(x.phone.replace(/[^\d+]/g, ''))}">Call ${esc(x.phone)}</a>` : ''}${x.website ? `<a class="btn btn-secondary btn-sm" href="${esc(x.website)}" target="_blank" rel="noopener noreferrer">Website</a>` : ''}
-            <button class="btn btn-sm" type="button" data-lead="${esc(x.id)}" data-name="${esc(x.name)}">Ask them to contact me</button></div></div></article>`).join('');
+            ${(window.MDB_CONFIG || {}).LEADS_ENABLED ? `<button class="btn btn-sm" type="button" data-lead="${esc(x.id)}" data-name="${esc(x.name)}">Ask them to contact me</button>` : ''}</div></div></article>`).join('');
         }, err => { list.innerHTML = M.errorBox(err.message); });
       }
       $('#df').addEventListener('submit', e => { e.preventDefault(); load(); });
